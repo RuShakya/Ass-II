@@ -1,3 +1,3 @@
-# Sem-II-Taxi-Booking-System-Python-Tkinter
+# Ass-II
 GUI Taxi Booking System Semester II Python Project <br>
 Author - Rustina Shakya
