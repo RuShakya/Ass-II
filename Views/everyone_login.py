@@ -15,6 +15,7 @@ class Everyone_login(tk.Tk):
         self.image()
         self.headings()
         self.labels()
+        self.buttons()
 
     def image(self):
         self.image = Image.open("C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\ZImage\\image_1.webp")
@@ -47,13 +48,20 @@ class Everyone_login(tk.Tk):
         self.lbl_register = tk.Label(self, text="If you have not register yet?? ", width=23, font=("Calibri", 12, "italic"), bg="light gray")
         self.lbl_register.place(x=1120, y=410)
 
-        self.btn_clkhere = tk.Button(self, text="Click Here to Register", width=17, font=("Calibri, 12"), fg="gray", bg="light gray", bd=0)
+    def go_to_registration(self):
+        self.destroy()
+        from customer_registration import Customer_registration
+        registration_page = Customer_registration(self)
+        registration_page.mainloop()
+    
+    def buttons(self):
+        self.btn_clkhere = tk.Button(self, text="Click Here to Register", width=17, font=("Calibri, 12"), fg="gray", bg="light gray", bd=0, command=self.go_to_registration)
         self.btn_clkhere.place(x=1315, y=408)
 
         self.btn_login = tk.Button(self, text="Login", width=15, font=("Calibri, 15"), fg="white", bg="black", bd=0)
         self.btn_login.place(x=1330, y=490)
 
-
+    
     
 if __name__=='__main__':
     gui = Everyone_login()
