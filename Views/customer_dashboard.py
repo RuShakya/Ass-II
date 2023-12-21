@@ -25,6 +25,9 @@ class Customer_dashboard(tk.Tk):
         
         self.image_2 = Image.open("C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\ZImage\\image_12.png")
         self.photo_2 = ImageTk.PhotoImage(self.image_2)
+        
+        self.image_3 = Image.open("C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\ZImage\\image_13.jpg")
+        self.photo_3 = ImageTk.PhotoImage(self.image_3)
 
     def headings(self):
         self.lbl_title1 = tk.Label(self, width=8, bg="black", anchor="w")
@@ -147,11 +150,51 @@ class Customer_dashboard(tk.Tk):
         lbl = tk.Label(self.main_frame, text="View Page", font=("Candara", 16))
         lbl.pack()
 
-    def update_cancel_page(self, frame):
-        lbl = tk.Label(self.main_frame, text="Update/Cancel Your Booking", font=("Candara", 20, "bold"), fg="black", bg="yellow")
-        lbl.pack()
+    def update_cancel_page(self, frame): 
+        self.blabel = tk.Label(self.main_frame, image=self.photo_3)
+        self.blabel.place(x=10, y=-360)
+           
+        lbl_1 = tk.Label(self.main_frame, width=33, text="Update/ Cancel Your Booking", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
+        lbl_1.place(x=590, y=50, height=85)
         
+        lbl_frame = tk.Frame(self.main_frame, width=10000, bg="light gray")
+        lbl_frame.place(x=-10, y=270, height=900)
         
+        lbl_customer_id = tk.Label(self.main_frame, text="Customer ID: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        lbl_customer_id.place(x=50, y=320)
+        txt_customer_id = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        txt_customer_id.place(x=250, y=320, height=35)
+        
+        lbl_booking_id = tk.Label(self.main_frame, text="Booking ID: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        lbl_booking_id.place(x=700, y=320)
+        txt_booking_id = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        txt_booking_id.place(x=900, y=320, height=35)
+        
+        lbl_pick_up_address = tk.Label(self.main_frame, text="Pick Up Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        lbl_pick_up_address.place(x=50, y=410)
+        txt_pick_up_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        txt_pick_up_address.place(x=250, y=410, height=35)
+        
+        lbl_drop_off_address = tk.Label(self.main_frame, text="Drop Off Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        lbl_drop_off_address.place(x=700, y=410)
+        txt_drop_off_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        txt_drop_off_address.place(x=900, y=410, height=35)
+        
+        lbl_pick_date = tk.Label(self.main_frame, text="Pick Up Date: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        lbl_pick_date.place(x=50, y=500)
+        txt_pick_date = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        txt_pick_date.place(x=250, y=500, height=35)
+        
+        lbl_pick_time = tk.Label(self.main_frame, text="Pick Up Time: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        lbl_pick_time.place(x=700, y=500)
+        txt_pick_time = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        txt_pick_time.place(x=900, y=500, height=35)
+        
+        btn_update = tk.Button(self.main_frame, text="Update", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
+        btn_update.place(x=250, y=600, height=50)
+        
+        btn_cancel = tk.Button(self.main_frame, text="Cancel Now!", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
+        btn_cancel.place(x=900, y=600, height=50)
 
 if __name__ == '__main__':
     gui = Customer_dashboard()

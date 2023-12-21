@@ -34,3 +34,45 @@ if __name__ == "__main__":
     page = LoginPage(root)
     root.mainloop()
 
+
+# Apply blur filter to the image
+        self.blurred_image = self.image1.filter(ImageFilter.BLUR)
+        
+        # Convert the blurred image to PhotoImage
+        self.photo1 = ImageTk.PhotoImage(self.blurred_image)
+
+        self.alabel = tk.Label(image=self.photo1)
+        self.alabel.place(x=-50, y=-700)       
+
+
+self.image1 = Image.open("C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\ZImage\\image_101.jpg")
+        # Apply blur filter to the image
+        self.blurred_image = self.image1.filter(ImageFilter.BLUR)
+        # Apply a brightness enhancement to make the image lighter
+        brightness_factor = 3.0  # Adjust as needed
+        self.enhanced_image = ImageEnhance.Brightness(self.blurred_image).enhance(brightness_factor)
+        # Convert the bright image to PhotoImage
+        self.photo1 = ImageTk.PhotoImage(self.enhanced_image)
+        self.alabel = tk.Label(image=self.photo1)
+        self.alabel.place(x=-50, y=-690)  
+
+
+
+def delete_pages(self):
+        for frame in self.main_frame.winfo_children():
+            frame.destroy()
+
+    def indicate(self, lb, page):    
+        self.hide_indicators()
+        lb.config(bg="yellow")
+        self.delete_pages()
+        page()
+
+    
+    def indicate(self, lb, page):
+        self.hide_indicators()
+        lb.config(bg="yellow")
+        self.current_frame = tk.Frame(self.main_frame)
+        page(self.current_frame)
+        self.current_frame.pack(pady=20)
+        self.delete_pages()
