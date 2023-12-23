@@ -5,21 +5,21 @@ class Customer_dashboard(tk.Tk):
     def __init__(self, root=None):
         super().__init__()
         self.root = root
-        self.title("Taxi Booking Registration Page")
+        self.title("Taxi Booking Customer Dasgboard Page")
 
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         self.geometry(f"{screen_width}x{screen_height}+0+0")
         self.resizable(False, False)
         
-        self.image()
+        self.images()
         self.headings()
         self.frames()
         self.buttons_indicators()
         self.hide_indicators()
         self.indicate(self.home_indicate, self.home_page)    # Automatically open the home page
 
-    def image(self):
+    def images(self):
         self.image_1 = Image.open("C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\ZImage\\image_11.jpg")
         self.photo_1 = ImageTk.PhotoImage(self.image_1)
         
@@ -152,7 +152,7 @@ class Customer_dashboard(tk.Tk):
 
     def update_cancel_page(self, frame): 
         self.blabel = tk.Label(self.main_frame, image=self.photo_3)
-        self.blabel.place(x=10, y=-360)
+        self.blabel.place(x=10, y=-375)
            
         lbl_1 = tk.Label(self.main_frame, width=33, text="Update/ Cancel Your Booking", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
         lbl_1.place(x=590, y=50, height=85)
@@ -191,10 +191,10 @@ class Customer_dashboard(tk.Tk):
         txt_pick_time.place(x=900, y=500, height=35)
         
         btn_update = tk.Button(self.main_frame, text="Update", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
-        btn_update.place(x=250, y=600, height=50)
+        btn_update.place(x=330, y=600, height=50)
         
         btn_cancel = tk.Button(self.main_frame, text="Cancel Now!", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
-        btn_cancel.place(x=900, y=600, height=50)
+        btn_cancel.place(x=980, y=600, height=50)
 
 if __name__ == '__main__':
     gui = Customer_dashboard()

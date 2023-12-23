@@ -1,5 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from tkinter import messagebox
 
 class Everyone_login(tk.Tk):
     def __init__(self, root=None):
@@ -54,6 +55,18 @@ class Everyone_login(tk.Tk):
         registration_page = Customer_registration(self)
         registration_page.mainloop()
     
+    def go_to_customer_dashboard(self):
+        self.destroy()
+        from customer_dashboard import Customer_dashboard
+        customer_dashboard_page = Customer_dashboard(self)
+        customer_dashboard_page.mainloop()
+    
+    def go_to_admin_dashboard(self):
+        self.destroy()
+        from admin_dashboard import Admin_dashboard
+        admin_dashboard_page = Admin_dashboard(self)
+        admin_dashboard_page.mainloop()
+    
     def underline_text(self, button):
         from tkinter import font
 
@@ -75,9 +88,31 @@ class Everyone_login(tk.Tk):
         # Call the underline_text method with the button instance
         self.underline_text(self.btn_clkhere)
 
-        self.btn_login = tk.Button(self, text="Login", width=8, font=("Times New Roman", 20, "bold"), fg="white", bg="black", bd=0)
+        self.btn_login = tk.Button(self, text="Login", width=8, font=("Times New Roman", 20, "bold"), fg="white", bg="black", bd=0, command=self.login_button_action)
         self.btn_login.place(x=1325, y=500, height=40)
 
+    
+    def login_button_action(self):
+        '''if not self.txt_username.get() or not self.txt_password.get():
+            messagebox.showerror("Error", "Invalid Username or Password!")
+        else:
+            messagebox.showinfo("Success", "Login Successful.")
+            self.go_to_customer_dashboard()'''
+
+        # for now
+        username = self.txt_username.get()
+        password = self.txt_password.get()
+
+        # Add your actual login validation logic here
+        # For example, you can check if the username and password are correct
+        if username == "aaa" and password == "000":
+            messagebox.showinfo("Welcome Customer", "Customer Login Successful.")
+            self.go_to_customer_dashboard()
+        elif username == "admin" and password == "12345":
+            messagebox.showinfo("Welcome Admin", "Admin Login Successful.")
+            self.go_to_admin_dashboard()
+        else:
+            messagebox.showerror("Error", "Invalid Username or Password!")
 
     
     
