@@ -17,6 +17,7 @@ class Everyone_login(tk.Tk):
         self.headings()
         self.labels()
         self.buttons()
+        self.toggle_password()
 
     def image(self):
         self.image = Image.open("C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\ZImage\\image_1.webp")
@@ -43,11 +44,21 @@ class Everyone_login(tk.Tk):
 
         self.lbl_password = tk.Label(self, text="Password: ", width=10, font=("Candara", 17), bg="light gray")
         self.lbl_password.place(x=1100, y=360)
-        self.txt_password = tk.Entry(self, width=20, font=("Candara", 15), bd=1)
+        self.txt_password = tk.Entry(self, width=20, font=("Candara", 15), bd=1, show="*")
         self.txt_password.place(x=1230, y=360, height=35)
+        
+        self.show_password_var = tk.IntVar()
+        self.chk_show_password = tk.Checkbutton(self, width=1, variable=self.show_password_var, command=self.toggle_password)
+        self.chk_show_password.place(x=1419, y=361, height=34)
 
         self.lbl_register = tk.Label(self, text="If you have not registered yet?? ", width=25, font=("Candara", 12, "italic"), bg="light gray")
         self.lbl_register.place(x=1117, y=430)
+        
+    def toggle_password(self):
+        if self.show_password_var.get() == 1:
+            self.txt_password.config(show="")
+        else:
+            self.txt_password.config(show="*")
 
     def go_to_registration(self):
         self.destroy()

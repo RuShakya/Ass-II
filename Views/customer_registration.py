@@ -1,5 +1,8 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from tkinter import messagebox
+from tkinter import ttk
+import re
 
 class Customer_registration(tk.Tk):
     def __init__(self, root=None):
@@ -71,6 +74,13 @@ class Customer_registration(tk.Tk):
         self.lbl_payment.place(x=900, y=650)
         self.txt_payment = tk.Entry(self, width=28, font=("Candara", 15), bd=1)
         self.txt_payment.place(x=1150, y=650, height=35)
+        
+        # Add a Combobox
+        self.payment_options = ["Cash", "Card"]
+        self.payment_var = tk.StringVar()
+        self.cmb_payment = ttk.Combobox(self, values=self.payment_options, textvariable=self.payment_var, font=("Candara", 15), state="readonly")
+        self.cmb_payment.place(x=1150, y=700, height=35)
+        self.cmb_payment.set("Cash")  # Set default value
     
     
     def go_to_login(self):
@@ -99,9 +109,60 @@ class Customer_registration(tk.Tk):
         # Call the underline_text method with the button instance
         self.underline_text(self.btn_back)
         
-        self.btn_register = tk.Button(self, text="Register", width=9, font=("Times New Roman", 20, "bold"), fg="white", bg="black", bd=1)
+        self.btn_register = tk.Button(self, text="Register", width=9, font=("Times New Roman", 20, "bold"), fg="white", bg="black", bd=1, command=self.login_button_action)
         self.btn_register.place(x=1305, y=740, height=40)
 
+    def login_button_action(self):
+
+        # Validation for name
+        name = self.txt_name.get()
+        if not name.replace(" ", "").isalnum():
+            messagebox.showerror("Error", "Invalid Name.")
+            return
+        
+        # Validation for address
+        address = self.txt_address.get()
+        if not address.replace(" ", "").isalnum():
+            messagebox.showerror("Error", "Invalid Address.")
+            return
+
+        # Validation for phone 
+        phone = self.txt_phone.get()
+        if not phone.isdigit() or len(phone) != 10:
+            messagebox.showerror("Error", "Invalid Phone Number")
+            return
+        
+        # Validation for email
+        email = self.txt_email.get()
+        email_pattern = re.compile(r'^[a-zA-Z0-9]+(_[a-zA-Z0-9]+)?@[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$')
+        if not email_pattern.match(email):
+            messagebox.showerror("Error", "Invalid Email Address. Please enter a valid email.")
+            return
+        
+        # Validation for username
+        username = self.txt_username.get()
+        if not username.replace(" ", "").isalnum() or len(username) > 30:
+            messagebox.showerror("Error", "Please use appropriate username.")
+        
+        # Validation for password
+        password = self.txt_password.get()
+        if not password.replace(" ", "").isalnum() or len(password) > 30:
+            messagebox.showerror("Error", "Please use appropriate password.")   
+        
+        confirm_password = self.txt_confirmpw.get()
+        if not confirm_password==password or confirm_password.replace(" ", "").isalnum() or len(confirm_password) > 30:
+            messagebox.showerror("Error", "Please use appropriate password to confirm.") 
+        
+        payment_method = self.txt_payment.get()
+        if not payment_method:
+            messagebox.showerror("Error", "Invalid Payment Method.") 
+        
+        else:
+            messagebox.showinfo("Registered", "Customer Registered Successfully.")
+            self.destroy()
+            from everyone_login import Everyone_login
+            everyone_login_page = Everyone_login(self)
+            everyone_login_page.mainloop()
     
     
            

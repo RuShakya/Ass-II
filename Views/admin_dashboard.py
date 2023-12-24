@@ -129,10 +129,10 @@ class Admin_dashboard(tk.Tk):
         txt_driver_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
         txt_driver_address.place(x=900, y=250, height=35)
         
-        lbl_driver_mobile = tk.Label(self.main_frame, text="Mobile: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_driver_mobile.place(x=50, y=350)
-        txt_driver_mobile = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_driver_mobile.place(x=250, y=350, height=35)
+        lbl_driver_phone = tk.Label(self.main_frame, text="Phone Number: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        lbl_driver_phone.place(x=50, y=350)
+        txt_driver_phone = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        txt_driver_phone.place(x=250, y=350, height=35)
         
         lbl_driver_email = tk.Label(self.main_frame, text="Email Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
         lbl_driver_email.place(x=700, y=350)
