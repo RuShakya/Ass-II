@@ -1,8 +1,9 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import messagebox
-from tkinter import ttk
+from tkinter import ttk 
 import re
+import mysql.connector
 
 class Customer_registration(tk.Tk):
     def __init__(self, root=None):
@@ -10,6 +11,14 @@ class Customer_registration(tk.Tk):
         self.root = root
         self.title("Taxi Booking Registration Page")
 
+        # Your MySQL database connection details
+        self.db_connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="taxi_booking_system"
+        )
+        
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         self.geometry(f"{screen_width}x{screen_height}+0+0")  
@@ -62,26 +71,44 @@ class Customer_registration(tk.Tk):
 
         self.lbl_password = tk.Label(self, text="Password: ", width=17, font=("Candara", 17), bg="#F5F5DC", anchor='e')
         self.lbl_password.place(x=900, y=510)
-        self.txt_password = tk.Entry(self, width=28, font=("Candara", 15), bd=1)
+        self.txt_password = tk.Entry(self, width=28, font=("Candara", 15), bd=1, show="*")
         self.txt_password.place(x=1150, y=510, height=35)
+        
+        self.show_password_var_1 = tk.IntVar()
+        self.chk_show_password_1 = tk.Checkbutton(self, width=1, variable=self.show_password_var_1, command=self.toggle_password)
+        self.chk_show_password_1.place(x=1427, y=511, height=34)
 
         self.lbl_confirmpw = tk.Label(self, text="Confirm Password: ", width=17, font=("Candara", 17), bg="#F5F5DC", anchor='e')
         self.lbl_confirmpw.place(x=900, y=580)
-        self.txt_confirmpw = tk.Entry(self, width=28, font=("Candara", 15), bd=1)
+        self.txt_confirmpw = tk.Entry(self, width=28, font=("Candara", 15), bd=1, show="*")
         self.txt_confirmpw.place(x=1150, y=580, height=35)
+        
+        self.show_password_var_2 = tk.IntVar()
+        self.chk_show_password_2 = tk.Checkbutton(self, width=1, variable=self.show_password_var_2, command=self.toggle_password)
+        self.chk_show_password_2.place(x=1427, y=581, height=34)
 
         self.lbl_payment = tk.Label(self, text="Payment Method: ", width=17, font=("Candara", 17), bg="#F5F5DC", anchor='e')
         self.lbl_payment.place(x=900, y=650)
-        self.txt_payment = tk.Entry(self, width=28, font=("Candara", 15), bd=1)
-        self.txt_payment.place(x=1150, y=650, height=35)
-        
-        # Add a Combobox
         self.payment_options = ["Cash", "Card"]
         self.payment_var = tk.StringVar()
-        self.cmb_payment = ttk.Combobox(self, values=self.payment_options, textvariable=self.payment_var, font=("Candara", 15), state="readonly")
-        self.cmb_payment.place(x=1150, y=700, height=35)
+        self.cmb_payment = ttk.Combobox(
+        self, width=26, values=self.payment_options, textvariable=self.payment_var, font=("Candara", 15), state="readonly")
+        self.cmb_payment.place(x=1150, y=650, height=35)
         self.cmb_payment.set("Cash")  # Set default value
+        # Set font for the dropdown list
+        self.cmb_payment.configure(font=("Candara", 15))
     
+    def toggle_password(self):
+        if self.show_password_var_1.get() == 1:
+            self.txt_password.config(show="")
+        else:
+            self.txt_password.config(show="*")
+
+        if self.show_password_var_2.get() == 1:
+            self.txt_confirmpw.config(show="")
+        else:
+            self.txt_confirmpw.config(show="*")
+
     
     def go_to_login(self):
         self.destroy()
@@ -143,26 +170,54 @@ class Customer_registration(tk.Tk):
         username = self.txt_username.get()
         if not username.replace(" ", "").isalnum() or len(username) > 30:
             messagebox.showerror("Error", "Please use appropriate username.")
-        
+            return
+
         # Validation for password
         password = self.txt_password.get()
         if not password.replace(" ", "").isalnum() or len(password) > 30:
             messagebox.showerror("Error", "Please use appropriate password.")   
+            return
         
         confirm_password = self.txt_confirmpw.get()
-        if not confirm_password==password or confirm_password.replace(" ", "").isalnum() or len(confirm_password) > 30:
-            messagebox.showerror("Error", "Please use appropriate password to confirm.") 
+        if confirm_password != password:
+            messagebox.showerror("Error", "Passwords do not match.")
+            return
         
-        payment_method = self.txt_payment.get()
+        payment_method = self.cmb_payment.get()
         if not payment_method:
             messagebox.showerror("Error", "Invalid Payment Method.") 
+            return 
         
-        else:
-            messagebox.showinfo("Registered", "Customer Registered Successfully.")
-            self.destroy()
-            from everyone_login import Everyone_login
-            everyone_login_page = Everyone_login(self)
-            everyone_login_page.mainloop()
+        # Insert Data Into tbl_customer
+        try:
+            cursor = self.db_connection.cursor()
+            query = "INSERT INTO tbl_customer (Name, Address, Phone_Number, Email, Username, Password, Confirm_Password, Payment_Method) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            data = (
+                name,
+                address,
+                phone,
+                email,
+                username,
+                password,
+                confirm_password,
+                payment_method
+            )
+            cursor.execute(query, data)
+            self.db_connection.commit()
+            
+        except mysql.connector.Error as err:
+            messagebox.showerror("Error", f"Error: {err}")
+            print("Error:", err)
+            
+        finally:
+            self.db_connection.close()
+               
+               
+        messagebox.showinfo("Registered", "Customer Registered Successfully.")
+        self.destroy()
+        from everyone_login import Everyone_login
+        everyone_login_page = Everyone_login(self)
+        everyone_login_page.mainloop()
     
     
            
