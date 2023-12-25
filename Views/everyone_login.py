@@ -1,12 +1,20 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import messagebox
+import sys
+sys.path.append('C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\Connection')
+import conn
+import login_action
 
 class Everyone_login(tk.Tk):
     def __init__(self, root=None):
         super().__init__()
         self.root = root
         self.title("Taxi Booking Login Page")
+        
+        # database connection details
+        from conn import conn
+        self.db_connection = conn()
         
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
@@ -104,28 +112,18 @@ class Everyone_login(tk.Tk):
 
     
     def login_button_action(self):
-        '''if not self.txt_username.get() or not self.txt_password.get():
-            messagebox.showerror("Error", "Invalid Username or Password!")
-        else:
-            messagebox.showinfo("Success", "Login Successful.")
-            self.go_to_customer_dashboard()'''
 
-        # for now
         username = self.txt_username.get()
         password = self.txt_password.get()
-
-        # Add your actual login validation logic here
-        # For example, you can check if the username and password are correct
-        if username == "aaa" and password == "000":
-            messagebox.showinfo("Welcome Customer", "Customer Login Successful.")
+        
+        from login_action import login_action
+        result = login_action(username, password)
+        if result == "customer":
             self.go_to_customer_dashboard()
-        elif username == "admin" and password == "12345":
-            messagebox.showinfo("Welcome Admin", "Admin Login Successful.")
+        elif result == "admin":
             self.go_to_admin_dashboard()
-        else:
-            messagebox.showerror("Error", "Invalid Username or Password!")
-
-    
+ 
+        
     
 if __name__=='__main__':
     gui = Everyone_login()

@@ -3,7 +3,12 @@ from PIL import Image, ImageTk
 from tkinter import messagebox
 from tkinter import ttk 
 import re
-import mysql.connector
+import sys
+sys.path.append('C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\Connection')
+import conn
+import register_action
+
+
 
 class Customer_registration(tk.Tk):
     def __init__(self, root=None):
@@ -11,13 +16,9 @@ class Customer_registration(tk.Tk):
         self.root = root
         self.title("Taxi Booking Registration Page")
 
-        # Your MySQL database connection details
-        self.db_connection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="taxi_booking_system"
-        )
+        # database connection details
+        from conn import conn
+        self.db_connection = conn()
         
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
@@ -28,7 +29,7 @@ class Customer_registration(tk.Tk):
         self.labels()
         self.buttons()
     
-        
+
     def image(self):
         self.image1 = Image.open("C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\ZImage\\image_9.jpg")
         self.photo1 = ImageTk.PhotoImage(self.image1)
@@ -136,10 +137,11 @@ class Customer_registration(tk.Tk):
         # Call the underline_text method with the button instance
         self.underline_text(self.btn_back)
         
-        self.btn_register = tk.Button(self, text="Register", width=9, font=("Times New Roman", 20, "bold"), fg="white", bg="black", bd=1, command=self.login_button_action)
+        self.btn_register = tk.Button(self, text="Register", width=9, font=("Times New Roman", 20, "bold"), fg="white", bg="black", bd=1, command=self.register_button_action)
         self.btn_register.place(x=1305, y=740, height=40)
 
-    def login_button_action(self):
+
+    def register_button_action(self):
 
         # Validation for name
         name = self.txt_name.get()
@@ -188,36 +190,19 @@ class Customer_registration(tk.Tk):
             messagebox.showerror("Error", "Invalid Payment Method.") 
             return 
         
-        # Insert Data Into tbl_customer
-        try:
-            cursor = self.db_connection.cursor()
-            query = "INSERT INTO tbl_customer (Name, Address, Phone_Number, Email, Username, Password, Confirm_Password, Payment_Method) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            data = (
-                name,
-                address,
-                phone,
-                email,
-                username,
-                password,
-                confirm_password,
-                payment_method
-            )
-            cursor.execute(query, data)
-            self.db_connection.commit()
-            
-        except mysql.connector.Error as err:
-            messagebox.showerror("Error", f"Error: {err}")
-            print("Error:", err)
-            
-        finally:
-            self.db_connection.close()
-               
-               
-        messagebox.showinfo("Registered", "Customer Registered Successfully.")
-        self.destroy()
-        from everyone_login import Everyone_login
-        everyone_login_page = Everyone_login(self)
-        everyone_login_page.mainloop()
+        
+        
+        
+        
+        # DDDDDDDDDDDDDDDDDBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+        from register_action import register_action
+        result = register_action(name, address, phone, email, username, password, confirm_password, payment_method)
+
+        if result:
+            self.destroy()
+            from everyone_login import Everyone_login
+            everyone_login_page = Everyone_login(self)
+            everyone_login_page.mainloop()
     
     
            
