@@ -1,5 +1,14 @@
 import tkinter as tk
+from tkinter import ttk
+from tkcalendar import DateEntry
 from PIL import Image, ImageTk
+from datetime import datetime, timedelta
+from tkinter import messagebox 
+import re 
+import sys
+sys.path.append('C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\Connection')
+import conn
+import book_now_action
 
 class Customer_dashboard(tk.Tk):
     def __init__(self, root=None):
@@ -103,99 +112,144 @@ class Customer_dashboard(tk.Tk):
         self.alabel = tk.Label(self.main_frame, image=self.photo_1)
         self.alabel.place(x=-1, y=-500)
         
-        lbl_1 = tk.Label(self.main_frame, width=20, text="Tap, Book, Roll", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
-        lbl_1.place(x=844, y=90, height=65)
+        self.lbl_1 = tk.Label(self.main_frame, width=20, text="Tap, Book, Roll", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
+        self.lbl_1.place(x=844, y=90, height=65)
         
-        lbl_2 = tk.Label(self.main_frame, width=25, text=" Your Cozy Ride Awaits!", font=("Candara", 30, "bold"), fg="white", bg="brown")
-        lbl_2.place(x=710, y=190, height=65)
+        self.lbl_2 = tk.Label(self.main_frame, width=25, text=" Your Cozy Ride Awaits!", font=("Candara", 30, "bold"), fg="white", bg="brown")
+        self.lbl_2.place(x=710, y=190, height=65)
         
 
     def book_page(self, frame):    
         self.blabel = tk.Label(self.main_frame, image=self.photo_2)
         self.blabel.place(x=-330, y=40)
         
-        lbl_frame = tk.Frame(self.main_frame, width=10000, bg="light gray")
-        lbl_frame.place(x=-10, y=290, height=900)
+        self.lbl_frame = tk.Frame(self.main_frame, width=10000, bg="light gray")
+        self.lbl_frame.place(x=-10, y=290, height=900)
         
-        lbl_pick_address = tk.Label(self.main_frame, text="Pick Up Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_pick_address.place(x=50, y=350)
-        txt_pick_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_pick_address.place(x=250, y=350, height=35)
-        
-        lbl_drop_address = tk.Label(self.main_frame, text="Drop Off Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_drop_address.place(x=700, y=350)
-        txt_drop_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_drop_address.place(x=900, y=350, height=35)
-        
-        lbl_pick_date = tk.Label(self.main_frame, text="Pick Up Date: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_pick_date.place(x=50, y=450)
-        txt_pick_date = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_pick_date.place(x=250, y=450, height=35)
-        
-        lbl_pick_time = tk.Label(self.main_frame, text="Pick Up Time: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_pick_time.place(x=700, y=450)
-        txt_pick_time = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_pick_time.place(x=900, y=450, height=35)
-        
-        checkbox_var = tk.BooleanVar()
-        chk_agree = tk.Checkbutton(self.main_frame, text="I agree that my submitted data is being collected and stored.", variable=checkbox_var, font=("Candara", 14), fg="black", bg="light gray")
-        chk_agree.place(x=380, y=550)
-        
-        btn_book_now = tk.Button(self.main_frame, text="Book Now!", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
-        btn_book_now.place(x=520, y=600, height=50)
+        self.lbl_pick_address = tk.Label(self.main_frame, text="Pick Up Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_pick_address.place(x=50, y=350)
+        self.txt_pick_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_pick_address.place(x=250, y=350, height=35)
         
         
+        self.lbl_drop_address = tk.Label(self.main_frame, text="Drop Off Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_drop_address.place(x=700, y=350)
+        self.txt_drop_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_drop_address.place(x=900, y=350, height=35)
+        
+        self.lbl_pick_date = tk.Label(self.main_frame, text="Pick Up Date: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_pick_date.place(x=50, y=450)
+        today = datetime.now().date()
+        tomorrow = today + timedelta(days=1)
+
+        self.cal = DateEntry(self.main_frame, width=32, background='darkblue', foreground='white', borderwidth=2, year=today.year, month=today.month, day=today.day, font=("Candara", 12), mindate=today)
+        self.cal.place(x=250, y=450, height=35)
+        
+        self.lbl_pick_time = tk.Label(self.main_frame, text="Pick Up Time: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_pick_time.place(x=700, y=450)
+        time_var = tk.StringVar()
+        self.time_picker = ttk.Combobox(self.main_frame, width=22, textvariable=time_var, values=['12:00 AM', '1:00 AM', '2:00 AM', '3:00 AM', '4:00 AM', '5:00 AM', '6:00 AM', '7:00 AM', '08:00 AM', '9:00 AM', '10:00 AM', '11:00 AM','12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '04:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM', '11:00 PM'], font=("Candara", 17), state='readonly')
+        self.time_picker.place(x=900, y=450, height=35)
+        self.time_picker.set('08:00 AM')
+        
+        self.checkbox_var = tk.BooleanVar()
+        self.chk_agree = tk.Checkbutton(self.main_frame, text="I agree that my submitted data is being collected and stored.", variable=self.checkbox_var, font=("Candara", 14), fg="black", bg="light gray")
+        self.chk_agree.place(x=380, y=550)
+        
+        self.btn_book_now = tk.Button(self.main_frame, text="Book Now!", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0, command=self.book_now_action)
+        self.btn_book_now.place(x=520, y=600, height=50)
+
 
     def view_page(self, frame):
-        lbl = tk.Label(self.main_frame, text="View Page", font=("Candara", 16))
-        lbl.pack()
+        self.lbl = tk.Label(self.main_frame, text="View Page", font=("Candara", 16))
+        self.lbl.pack()
 
     def update_cancel_page(self, frame): 
         self.blabel = tk.Label(self.main_frame, image=self.photo_3)
         self.blabel.place(x=10, y=-375)
            
-        lbl_1 = tk.Label(self.main_frame, width=33, text="Update/ Cancel Your Booking", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
-        lbl_1.place(x=590, y=50, height=85)
+        self.lbl_1 = tk.Label(self.main_frame, width=33, text="Update/ Cancel Your Booking", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
+        self.lbl_1.place(x=590, y=50, height=85)
         
-        lbl_frame = tk.Frame(self.main_frame, width=10000, bg="light gray")
-        lbl_frame.place(x=-10, y=270, height=900)
+        self.lbl_frame = tk.Frame(self.main_frame, width=10000, bg="light gray")
+        self.lbl_frame.place(x=-10, y=270, height=900)
         
-        lbl_customer_id = tk.Label(self.main_frame, text="Customer ID: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_customer_id.place(x=50, y=320)
-        txt_customer_id = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_customer_id.place(x=250, y=320, height=35)
+        self.lbl_customer_id = tk.Label(self.main_frame, text="Customer ID: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_customer_id.place(x=50, y=320)
+        self.txt_customer_id = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_customer_id.place(x=250, y=320, height=35)
         
-        lbl_booking_id = tk.Label(self.main_frame, text="Booking ID: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_booking_id.place(x=700, y=320)
-        txt_booking_id = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_booking_id.place(x=900, y=320, height=35)
+        self.lbl_booking_id = tk.Label(self.main_frame, text="Booking ID: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_booking_id.place(x=700, y=320)
+        self.txt_booking_id = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_booking_id.place(x=900, y=320, height=35)
         
-        lbl_pick_up_address = tk.Label(self.main_frame, text="Pick Up Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_pick_up_address.place(x=50, y=410)
-        txt_pick_up_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_pick_up_address.place(x=250, y=410, height=35)
+        self.lbl_pick_up_address = tk.Label(self.main_frame, text="Pick Up Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_pick_up_address.place(x=50, y=410)
+        self.txt_pick_up_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_pick_up_address.place(x=250, y=410, height=35)
         
-        lbl_drop_off_address = tk.Label(self.main_frame, text="Drop Off Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_drop_off_address.place(x=700, y=410)
-        txt_drop_off_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_drop_off_address.place(x=900, y=410, height=35)
+        self.lbl_drop_off_address = tk.Label(self.main_frame, text="Drop Off Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_drop_off_address.place(x=700, y=410)
+        self.txt_drop_off_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_drop_off_address.place(x=900, y=410, height=35)
         
-        lbl_pick_date = tk.Label(self.main_frame, text="Pick Up Date: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_pick_date.place(x=50, y=500)
-        txt_pick_date = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_pick_date.place(x=250, y=500, height=35)
+        self.lbl_pick_date = tk.Label(self.main_frame, text="Pick Up Date: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_pick_date.place(x=50, y=500)
+        self.txt_pick_date = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_pick_date.place(x=250, y=500, height=35)
         
-        lbl_pick_time = tk.Label(self.main_frame, text="Pick Up Time: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_pick_time.place(x=700, y=500)
-        txt_pick_time = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_pick_time.place(x=900, y=500, height=35)
+        self.lbl_pick_time = tk.Label(self.main_frame, text="Pick Up Time: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_pick_time.place(x=700, y=500)
+        self.txt_pick_time = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_pick_time.place(x=900, y=500, height=35)
         
-        btn_update = tk.Button(self.main_frame, text="Update", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
-        btn_update.place(x=330, y=600, height=50)
+        self.btn_update = tk.Button(self.main_frame, text="Update", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
+        self.btn_update.place(x=330, y=600, height=50)
         
-        btn_cancel = tk.Button(self.main_frame, text="Cancel Now!", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
-        btn_cancel.place(x=980, y=600, height=50)
+        self.btn_cancel = tk.Button(self.main_frame, text="Cancel Now!", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
+        self.btn_cancel.place(x=980, y=600, height=50)
 
+    def book_now_action(self):
+        pick_address = self.txt_pick_address.get()
+        if not re.match(r'^[a-zA-Z0-9/-]+$', pick_address):
+            messagebox.showerror("Error", "Invalid Pick Up Address.")
+            return
+        
+        drop_address = self.txt_drop_address.get()
+        if not re.match(r'^[a-zA-Z0-9/-]+$', drop_address):
+            messagebox.showerror("Error", "Invalid Drop Off Address.")
+            return
+    
+        pick_date = self.cal.get_date()
+       
+        # Validate Time
+        pick_time = self.time_picker.get()
+        if not re.match(r'^\d{1,2}:\d{2} [APMapm]{2}$', pick_time):
+            messagebox.showerror("Error", "Invalid Time.")
+            return
+
+        # Validate Checkbox
+        agree = self.checkbox_var.get()
+        if not agree:
+            messagebox.showerror("Error", "You must agree to the terms.")
+            return
+        
+        # DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+        from book_now_action import book_now_action
+        result = book_now_action(pick_address, drop_address, pick_date, pick_time, agree)
+        
+        if result:
+            self.clear_entry_fields() 
+    
+    # Clear All Entries
+    def clear_entry_fields(self):
+        # Clear all entry fields
+        self.txt_pick_address.delete(0, tk.END)
+        self.txt_drop_address.delete(0, tk.END)
+        self.checkbox_var.set(False)  # Uncheck the checkbox
+    
+    
 if __name__ == '__main__':
     gui = Customer_dashboard()
     gui.mainloop()

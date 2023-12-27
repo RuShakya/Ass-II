@@ -1,11 +1,22 @@
 import tkinter as tk
+from tkinter import messagebox  
+import re 
 from PIL import Image, ImageTk
+import sys
+sys.path.append('C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\Connection')
+import conn
+import add_driver_action
+import delete_driver_action
 
 class Admin_dashboard(tk.Tk):
     def __init__(self, root=None):
         super().__init__()
         self.root = root
         self.title("Taxi Booking Admin Dashboard Page")
+
+        # database connection details
+        from conn import conn
+        self.db_connection = conn()
 
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
@@ -17,6 +28,7 @@ class Admin_dashboard(tk.Tk):
         self.buttons_indicators()
         self.hide_indicators()
         self.indicate(self.home_indicate, self.home_page)    # Automatically open the home page
+     
 
     def headings(self):
         self.lbl_title1 = tk.Label(self, width=8, bg="#104E8B", anchor="w")
@@ -99,71 +111,86 @@ class Admin_dashboard(tk.Tk):
         #View_Customers_Details_Indicator
         self.view_customers_details_indicate = tk.Label(self, text=" ", bg="black")
         self.view_customers_details_indicate.place(x=0, y=740, width=10, height=40)
-        
+    
+    # show password
+    def toggle_password(self):
+        if self.show_password_var_1.get() == 1:
+            self.txt_password.config(show="")
+        else:
+            self.txt_password.config(show="*")
+
+        if self.show_password_var_2.get() == 1:
+            self.txt_confirmpw.config(show="")
+        else:
+            self.txt_confirmpw.config(show="*")    
 
     def home_page(self, frame):   
         self.alabel = tk.Label(self.main_frame, image=self.photo_1)
         self.alabel.place(x=-10, y=-550)
                      
-        lbl_1 = tk.Label(self.main_frame, width=30, text="Ensuring A Seemless Experience", font=("Candara", 30, "bold"), fg="black", bg="light gray", bd=1)
-        lbl_1.place(x=600, y=510, height=65)
+        self.lbl_1 = tk.Label(self.main_frame, width=30, text="Ensuring A Seemless Experience", font=("Candara", 30, "bold"), fg="black", bg="light gray", bd=1)
+        self.lbl_1.place(x=600, y=510, height=65)
         
-        lbl_2 = tk.Label(self.main_frame, width=25, text=" Control Without Complexity", font=("Candara", 30, "bold"), fg="black", bg="light gray")
-        lbl_2.place(x=710, y=610, height=65)
+        self.lbl_2 = tk.Label(self.main_frame, width=25, text=" Control Without Complexity", font=("Candara", 30, "bold"), fg="black", bg="light gray")
+        self.lbl_2.place(x=710, y=610, height=65)
         
 
     def manage_drivers_page(self, frame):    
-        lbl_1 = tk.Label(self.main_frame, width=20, text="Manage Drivers", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
-        lbl_1.place(x=830, y=60, height=65)
+        self.lbl_1 = tk.Label(self.main_frame, width=20, text="Manage Drivers", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
+        self.lbl_1.place(x=830, y=60, height=65)
         
-        lbl_frame = tk.Frame(self.main_frame, width=10000, bg="light gray")
-        lbl_frame.place(x=-10, y=185, height=900)
+        self.lbl_frame = tk.Frame(self.main_frame, width=10000, bg="light gray")
+        self.lbl_frame.place(x=-10, y=185, height=900)
         
-        lbl_driver_name = tk.Label(self.main_frame, text="Driver's Name: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_driver_name.place(x=50, y=250)
-        txt_driver_name = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_driver_name.place(x=250, y=250, height=35)
+        self.lbl_driver_name = tk.Label(self.main_frame, text="Driver's Name: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_driver_name.place(x=50, y=250)
+        self.txt_driver_name = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_driver_name.place(x=250, y=250, height=35)
         
-        lbl_driver_address = tk.Label(self.main_frame, text="Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_driver_address.place(x=700, y=250)
-        txt_driver_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_driver_address.place(x=900, y=250, height=35)
+        self.lbl_driver_address = tk.Label(self.main_frame, text="Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_driver_address.place(x=700, y=250)
+        self.txt_driver_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_driver_address.place(x=900, y=250, height=35)
         
-        lbl_driver_phone = tk.Label(self.main_frame, text="Phone Number: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_driver_phone.place(x=50, y=350)
-        txt_driver_phone = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_driver_phone.place(x=250, y=350, height=35)
+        self.lbl_driver_phone = tk.Label(self.main_frame, text="Phone Number: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_driver_phone.place(x=50, y=350)
+        self.txt_driver_phone = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_driver_phone.place(x=250, y=350, height=35)
         
-        lbl_driver_email = tk.Label(self.main_frame, text="Email Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_driver_email.place(x=700, y=350)
-        txt_driver_email = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_driver_email.place(x=900, y=350, height=35)
+        self.lbl_driver_email = tk.Label(self.main_frame, text="Email Address: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_driver_email.place(x=700, y=350)
+        self.txt_driver_email = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_driver_email.place(x=900, y=350, height=35)
         
-        lbl_username = tk.Label(self.main_frame, text="Username: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_username.place(x=50, y=450)
-        txt_username = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_username.place(x=250, y=450, height=35)
+        self.lbl_username = tk.Label(self.main_frame, text="Username: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_username.place(x=50, y=450)
+        self.txt_username = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_username.place(x=250, y=450, height=35)
         
-        lbl_password = tk.Label(self.main_frame, text="Password: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_password.place(x=700, y=450)
-        txt_password = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_password.place(x=900, y=450, height=35)
+        self.lbl_password = tk.Label(self.main_frame, text="Password: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_password.place(x=700, y=450)
+        self.txt_password = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1, show="*")
+        self.txt_password.place(x=900, y=450, height=35)
         
-        lbl_licence_number = tk.Label(self.main_frame, text="Licence Number: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_licence_number.place(x=50, y=550)
-        txt_licence_number = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_licence_number.place(x=250, y=550, height=35)
+        self.show_password_var_1 = tk.IntVar()
+        self.chk_show_password_1 = tk.Checkbutton(self, width=1, variable=self.show_password_var_1, command=self.toggle_password)
+        self.chk_show_password_1.place(x=1448, y=541, height=34)
         
-        lbl_taxi_plate_number = tk.Label(self.main_frame, text="Taxi Plate Number: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        lbl_taxi_plate_number.place(x=700, y=550)
-        txt_taxi_plate_number = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        txt_taxi_plate_number.place(x=900, y=550, height=35)
+        self.lbl_licence_number = tk.Label(self.main_frame, text="Licence Number: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_licence_number.place(x=50, y=550)
+        self.txt_licence_number = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_licence_number.place(x=250, y=550, height=35)
         
-        btn_book_now = tk.Button(self.main_frame, text="Add Driver", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
-        btn_book_now.place(x=330, y=640, height=50)
+        self.lbl_taxi_plate_number = tk.Label(self.main_frame, text="Taxi Plate Number: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_taxi_plate_number.place(x=700, y=550)
+        self.txt_taxi_plate_number = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_taxi_plate_number.place(x=900, y=550, height=35)
         
-        btn_book_now = tk.Button(self.main_frame, text="Delete Driver", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
-        btn_book_now.place(x=980, y=640, height=50)
+        self.btn_add_driver = tk.Button(self.main_frame, text="Add Driver", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0, command=self.add_driver_button_action)
+        self.btn_add_driver.place(x=330, y=640, height=50)
+        
+        self.btn_delete_driver = tk.Button(self.main_frame, text="Delete Driver", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0, command=self.delete_driver_action)
+        self.btn_delete_driver.place(x=980, y=640, height=50)
         
         
 
@@ -182,6 +209,112 @@ class Admin_dashboard(tk.Tk):
         lbl_1.place(x=844, y=90, height=65)
         
     
+    
+    #####################============================== Action for btn_add_driver ==========================================================================
+    def add_driver_button_action(self):
+        
+        # Validation for name
+        name = self.txt_driver_name.get()
+        if not name.replace(" ", "").isalnum():
+            messagebox.showerror("Error", "Invalid Name.")
+            return
+        
+        # Validation for address
+        address = self.txt_driver_address.get()
+        if not address.replace(" ", "").isalnum():
+            messagebox.showerror("Error", "Invalid Address.")
+            return
+
+        # Validation for phone 
+        phone = self.txt_driver_phone.get()
+        if not phone.isdigit() or len(phone) != 10:
+            messagebox.showerror("Error", "Invalid Phone Number")
+            return
+        
+        # Validation for email
+        email = self.txt_driver_email.get()
+        email_pattern = re.compile(r'^[a-zA-Z0-9]+(_[a-zA-Z0-9]+)?@[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$')
+        if not email_pattern.match(email):
+            messagebox.showerror("Error", "Invalid Email Address. Please enter a valid email.")
+            return
+        
+        # Validation for username
+        username = self.txt_username.get()
+        if not username.replace(" ", "").isalnum() or len(username) > 30:
+            messagebox.showerror("Error", "Please use appropriate username.")
+            return
+
+        # Validation for password
+        password = self.txt_password.get()
+        if not password.replace(" ", "").isalnum() or len(password) > 30:
+            messagebox.showerror("Error", "Please use appropriate password.")   
+            return
+        
+        # Validation for licence number
+        licence_number = self.txt_licence_number.get()
+        if not re.match(r'^[a-zA-Z0-9/-]+$', licence_number):
+            messagebox.showerror("Error", "Invalid Licence Number. Please enter a valid licence number.")
+            return
+        
+        # Validation for taxi plate number
+        taxi_plate_number = self.txt_taxi_plate_number.get()
+        if not re.match(r'^[a-zA-Z0-9/-]+$', taxi_plate_number):
+            messagebox.showerror("Error", "Invalid Taxi Plate Number.")
+            return
+        
+        # DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+        from add_driver_action import add_driver_action
+        result = add_driver_action(name, address, phone, email, username, password, licence_number, taxi_plate_number)
+        
+        if result:
+            self.clear_entry_fields()  
+     
+     
+    def delete_driver_action(self):
+        name = self.txt_driver_name.get()
+        if not name.replace(" ", "").isalnum():
+            messagebox.showerror("Error", "Invalid Name.")
+            return
+        
+        username = self.txt_username.get()
+        if not username.replace(" ", "").isalnum() or len(username) > 30:
+            messagebox.showerror("Error", "Please use appropriate username.")
+            return
+        
+        password = self.txt_password.get()
+        if not password.replace(" ", "").isalnum() or len(password) > 30:
+            messagebox.showerror("Error", "Please use appropriate password.")   
+            return
+        
+        licence_number = self.txt_licence_number.get()
+        if not re.match(r'^[a-zA-Z0-9/-]+$', licence_number):
+            messagebox.showerror("Error", "Invalid Licence Number. Please enter a valid licence number.")
+            return
+        
+        taxi_plate_number = self.txt_taxi_plate_number.get()
+        if not re.match(r'^[a-zA-Z0-9/-]+$', taxi_plate_number):
+            messagebox.showerror("Error", "Invalid Taxi Plate Number.")
+            return
+         
+        from delete_driver_action import delete_driver_action
+        result = delete_driver_action(name, username, password, licence_number, taxi_plate_number)
+        
+        if result:
+            self.clear_entry_fields() 
+            
+    
+    # Clear All Entries
+    def clear_entry_fields(self):
+        # Clear all entry fields
+        self.txt_driver_name.delete(0, tk.END)
+        self.txt_driver_address.delete(0, tk.END)
+        self.txt_driver_phone.delete(0, tk.END)
+        self.txt_driver_email.delete(0, tk.END)
+        self.txt_username.delete(0, tk.END)
+        self.txt_password.delete(0, tk.END)
+        self.txt_licence_number.delete(0, tk.END)
+        self.txt_taxi_plate_number.delete(0, tk.END)
+        
 
 if __name__ == '__main__':
     gui = Admin_dashboard()
