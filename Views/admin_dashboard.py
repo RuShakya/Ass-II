@@ -111,20 +111,20 @@ class Admin_dashboard(tk.Tk):
         #View_Customers_Details_Indicator
         self.view_customers_details_indicate = tk.Label(self, text=" ", bg="black")
         self.view_customers_details_indicate.place(x=0, y=740, width=10, height=40)
+        
+    def forgetCheckBox(self):
+        self.chk_show_password_1.place_forget()
     
     # show password
     def toggle_password(self):
         if self.show_password_var_1.get() == 1:
-            self.txt_password.config(show="")
+            self.txt_password.config( show="")
         else:
             self.txt_password.config(show="*")
 
-        if self.show_password_var_2.get() == 1:
-            self.txt_confirmpw.config(show="")
-        else:
-            self.txt_confirmpw.config(show="*")    
 
     def home_page(self, frame):   
+        # self.forgetCheckBox()
         self.alabel = tk.Label(self.main_frame, image=self.photo_1)
         self.alabel.place(x=-10, y=-550)
                      
@@ -134,7 +134,6 @@ class Admin_dashboard(tk.Tk):
         self.lbl_2 = tk.Label(self.main_frame, width=25, text=" Control Without Complexity", font=("Candara", 30, "bold"), fg="black", bg="light gray")
         self.lbl_2.place(x=710, y=610, height=65)
         
-
     def manage_drivers_page(self, frame):    
         self.lbl_1 = tk.Label(self.main_frame, width=20, text="Manage Drivers", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
         self.lbl_1.place(x=830, y=60, height=65)
@@ -171,8 +170,8 @@ class Admin_dashboard(tk.Tk):
         self.lbl_password.place(x=700, y=450)
         self.txt_password = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1, show="*")
         self.txt_password.place(x=900, y=450, height=35)
-        
-        self.show_password_var_1 = tk.IntVar()
+                
+        self.show_password_var_1 = tk.IntVar(self.main_frame)
         self.chk_show_password_1 = tk.Checkbutton(self, width=1, variable=self.show_password_var_1, command=self.toggle_password)
         self.chk_show_password_1.place(x=1448, y=541, height=34)
         
@@ -192,19 +191,21 @@ class Admin_dashboard(tk.Tk):
         self.btn_delete_driver = tk.Button(self.main_frame, text="Delete Driver", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0, command=self.delete_driver_action)
         self.btn_delete_driver.place(x=980, y=640, height=50)
         
-        
 
     def view_drivers_page(self, frame):
+        self.forgetCheckBox()
         lbl_1 = tk.Label(self.main_frame, width=20, text="View Drivers", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
         lbl_1.place(x=844, y=90, height=65)
 
 
     def manage_bookings_page(self, frame): 
+        self.forgetCheckBox()
         lbl_1 = tk.Label(self.main_frame, width=20, text="Manage Bookings", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
         lbl_1.place(x=844, y=90, height=65)
         
     
     def customers_details_page(self, frame): 
+        self.forgetCheckBox()
         lbl_1 = tk.Label(self.main_frame, width=20, text="Customers Details", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
         lbl_1.place(x=844, y=90, height=65)
         
@@ -212,7 +213,6 @@ class Admin_dashboard(tk.Tk):
     
     #####################============================== Action for btn_add_driver ==========================================================================
     def add_driver_button_action(self):
-        
         # Validation for name
         name = self.txt_driver_name.get()
         if not name.replace(" ", "").isalnum():
@@ -258,8 +258,8 @@ class Admin_dashboard(tk.Tk):
         
         # Validation for taxi plate number
         taxi_plate_number = self.txt_taxi_plate_number.get()
-        if not re.match(r'^[a-zA-Z0-9/-]+$', taxi_plate_number):
-            messagebox.showerror("Error", "Invalid Taxi Plate Number.")
+        if not taxi_plate_number.replace(" ", "").isalnum():
+            messagebox.showerror("Error", "Invalid Name.")
             return
         
         # DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
@@ -292,7 +292,7 @@ class Admin_dashboard(tk.Tk):
             return
         
         taxi_plate_number = self.txt_taxi_plate_number.get()
-        if not re.match(r'^[a-zA-Z0-9/-]+$', taxi_plate_number):
+        if not taxi_plate_number.replace(" ", "").isalnum():
             messagebox.showerror("Error", "Invalid Taxi Plate Number.")
             return
          

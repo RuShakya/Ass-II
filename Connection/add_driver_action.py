@@ -9,8 +9,9 @@ def add_driver_action(name, address, phone, email, username, password, licence_n
     if db_connection:
         try:
             cursor = db_connection.cursor()
-            query = "INSERT INTO tbl_driver (Name, Address, Phone_Number, Email, Username, Password, Licence_Number, Taxi_Plate_Number) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            data = (
+            query_1 = "INSERT INTO tbl_driver (Name, Address, Phone_Number, Email, Username, Password, Licence_Number, Admin_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            query_2 = "INSERT INTO tbl_taxi (Taxi_Plate_Number, Taxi_Status) VALUES (%s, %s)"
+            data_1 = (
                 name,
                 address,
                 phone,
@@ -18,9 +19,14 @@ def add_driver_action(name, address, phone, email, username, password, licence_n
                 username,
                 password,
                 licence_number,
-                taxi_plate_number
+                1
             )
-            cursor.execute(query, data)
+            data_2 = (
+                taxi_plate_number,
+                "Available"
+            )
+            cursor.execute(query_1, data_1)
+            cursor.execute(query_2, data_2)
             db_connection.commit()
 
             # Check if any rows were affected

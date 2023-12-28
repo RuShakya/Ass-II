@@ -9,6 +9,7 @@ import sys
 sys.path.append('C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\Connection')
 import conn
 import book_now_action
+import update_action
 
 class Customer_dashboard(tk.Tk):
     def __init__(self, root=None):
@@ -141,8 +142,7 @@ class Customer_dashboard(tk.Tk):
         self.lbl_pick_date.place(x=50, y=450)
         today = datetime.now().date()
         tomorrow = today + timedelta(days=1)
-
-        self.cal = DateEntry(self.main_frame, width=32, background='darkblue', foreground='white', borderwidth=2, year=today.year, month=today.month, day=today.day, font=("Candara", 12), mindate=today)
+        self.cal = DateEntry(self.main_frame, width=41, background='darkblue', foreground='white', borderwidth=2, year=today.year, month=today.month, day=today.day, font=("Candara", 10), mindate=today)
         self.cal.place(x=250, y=450, height=35)
         
         self.lbl_pick_time = tk.Label(self.main_frame, text="Pick Up Time: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
@@ -194,17 +194,22 @@ class Customer_dashboard(tk.Tk):
         self.txt_drop_off_address = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
         self.txt_drop_off_address.place(x=900, y=410, height=35)
         
-        self.lbl_pick_date = tk.Label(self.main_frame, text="Pick Up Date: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        self.lbl_pick_date.place(x=50, y=500)
-        self.txt_pick_date = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        self.txt_pick_date.place(x=250, y=500, height=35)
+        self.lbl_pick_up_date = tk.Label(self.main_frame, text="Pick Up Date: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_pick_up_date.place(x=50, y=500)
+        update_today = datetime.now().date()
+        update_tomorrow = update_today + timedelta(days=1)
+
+        self.update_cal = DateEntry(self.main_frame, width=41, background='darkblue', foreground='white', borderwidth=2, year=update_today.year, month=update_today.month, day=update_today.day, font=("Candara", 10), mindate=update_today)
+        self.update_cal.place(x=250, y=500, height=35)
         
-        self.lbl_pick_time = tk.Label(self.main_frame, text="Pick Up Time: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
-        self.lbl_pick_time.place(x=700, y=500)
-        self.txt_pick_time = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
-        self.txt_pick_time.place(x=900, y=500, height=35)
+        self.lbl_pick_up_time = tk.Label(self.main_frame, text="Pick Up Time: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
+        self.lbl_pick_up_time.place(x=700, y=500)
+        update_time_var = tk.StringVar()
+        self.update_time_picker = ttk.Combobox(self.main_frame, width=22, textvariable=update_time_var, values=['12:00 AM', '1:00 AM', '2:00 AM', '3:00 AM', '4:00 AM', '5:00 AM', '6:00 AM', '7:00 AM', '08:00 AM', '9:00 AM', '10:00 AM', '11:00 AM','12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '04:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM', '11:00 PM'], font=("Candara", 17), state='readonly')
+        self.update_time_picker.place(x=900, y=500, height=35)
+        self.update_time_picker.set('08:00 AM')
         
-        self.btn_update = tk.Button(self.main_frame, text="Update", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
+        self.btn_update = tk.Button(self.main_frame, text="Update", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0, command=self.update_action)
         self.btn_update.place(x=330, y=600, height=50)
         
         self.btn_cancel = tk.Button(self.main_frame, text="Cancel Now!", width=15, font=("Candara", 20, "bold"), fg="black", bg="yellow", bd=0)
@@ -240,15 +245,56 @@ class Customer_dashboard(tk.Tk):
         result = book_now_action(pick_address, drop_address, pick_date, pick_time, agree)
         
         if result:
-            self.clear_entry_fields() 
+            self.clear_entry_fields_1() 
+    
+    def update_action(self):
+        up_customer_id = self.txt_customer_id.get()
+        if not up_customer_id.isdigit():
+            messagebox.showerror("Error", "Invalid Customer_ID.")
+            return
+        
+        up_booking_id = self.txt_booking_id.get()
+        if not up_booking_id.isdigit():
+            messagebox.showerror("Error", "Invalid Booking_ID.")
+            return
+        
+        up_pick_up_address = self.txt_pick_up_address.get()
+        if not re.match(r'^[a-zA-Z0-9/-]+$', up_pick_up_address):
+            messagebox.showerror("Error", "Invalid Pick Up Address.")
+            return
+        
+        up_drop_off_address = self.txt_drop_off_address.get()
+        if not re.match(r'^[a-zA-Z0-9/-]+$', up_drop_off_address):
+            messagebox.showerror("Error", "Invalid Pick Up Address.")
+            return
+        
+        up_date = self.update_cal.get()
+        
+        up_time = self.update_time_picker.get()
+        if not re.match(r'^\d{1,2}:\d{2} [APMapm]{2}$', up_time):
+            messagebox.showerror("Error", "Invalid Time.")
+            return
+        
+        from update_action import update_action
+        result = update_action(up_customer_id, up_booking_id, up_pick_up_address, up_drop_off_address, up_date, up_time )
+        
+        if result:
+            self.clear_entry_fields_2() 
+        
     
     # Clear All Entries
-    def clear_entry_fields(self):
+    def clear_entry_fields_1(self):
         # Clear all entry fields
         self.txt_pick_address.delete(0, tk.END)
         self.txt_drop_address.delete(0, tk.END)
         self.checkbox_var.set(False)  # Uncheck the checkbox
     
+    # Clear All Entries
+    def clear_entry_fields_2(self):
+        self.txt_customer_id.delete(0, tk.END)
+        self.txt_booking_id.delete(0, tk.END)
+        self.txt_pick_up_address.delete(0, tk.END)
+        self.txt_drop_off_address.delete(0, tk.END)
     
 if __name__ == '__main__':
     gui = Customer_dashboard()

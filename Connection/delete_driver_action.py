@@ -10,16 +10,16 @@ def delete_driver_action(name, username, password, licence_number, taxi_plate_nu
         try:
             cursor = db_connection.cursor()
 
-            # Use %s as placeholders for values
-            query = "DELETE FROM tbl_driver WHERE name=%s AND username=%s AND password=%s AND licence_number=%s AND taxi_plate_number=%s"
+            query_1 = "DELETE FROM tbl_driver WHERE name=%s AND username=%s AND password=%s AND licence_number=%s"
+            query_2 = "DELETE FROM tbl_taxi WHERE Taxi_Plate_Number=%s"
             
             # Execute the query with the provided values
-            cursor.execute(query, (name, username, password, licence_number, taxi_plate_number))
-
+            cursor.execute(query_1, (name, username, password, licence_number))
+            cursor.execute(query_2, (taxi_plate_number,))  # Add a comma to make it a tuple
+            
             # Commit the changes to the database
             db_connection.commit()
 
-            # Check if any rows were affected
             if cursor.rowcount > 0:
                 messagebox.showinfo("Driver Deleted", "Driver deleted successfully.")
                 return True
