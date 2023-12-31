@@ -6,7 +6,9 @@ import re
 import sys
 sys.path.append('C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\Connection')
 import conn
+import mysql.connector
 import register_action
+import global_all
 
 
 
@@ -180,6 +182,12 @@ class Customer_registration(tk.Tk):
             messagebox.showerror("Error", "Please use appropriate password.")   
             return
         
+        # =============================================== Set global variables =============================================================================================================================================
+        global_all.global_username = username
+        global_all.global_password = password
+        #==========================================================================================================================================================================================================================
+        
+        
         confirm_password = self.txt_confirmpw.get()
         if confirm_password != password:
             messagebox.showerror("Error", "Passwords do not match.")
@@ -193,19 +201,21 @@ class Customer_registration(tk.Tk):
         
         
         
-        
-        # DDDDDDDDDDDDDDDDDBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+        # ===================================================== DB ====================================================================================================================================
         from register_action import register_action
-        result = register_action(name, address, phone, email, username, password, confirm_password, payment_method)
-
+        result, customer_id = register_action(name, address, phone, email, username, password, confirm_password, payment_method)
+        
         if result:
             self.destroy()
+            # Store customer_id in global variable
+            global_all.global_customer_id = customer_id
+            
             from everyone_login import Everyone_login
             everyone_login_page = Everyone_login(self)
             everyone_login_page.mainloop()
     
+
     
-           
 if __name__=='__main__':
     gui = Customer_registration()
     gui.mainloop()

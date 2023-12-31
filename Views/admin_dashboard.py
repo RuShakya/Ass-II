@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox  
+from tkinter import ttk, messagebox  
 import re 
 from PIL import Image, ImageTk
 import sys
@@ -7,6 +7,11 @@ sys.path.append('C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\Connect
 import conn
 import add_driver_action
 import delete_driver_action
+import global_all
+import customer_details_action
+import view_drivers_action
+import manage_bookings_action
+
 
 class Admin_dashboard(tk.Tk):
     def __init__(self, root=None):
@@ -28,7 +33,32 @@ class Admin_dashboard(tk.Tk):
         self.buttons_indicators()
         self.hide_indicators()
         self.indicate(self.home_indicate, self.home_page)    # Automatically open the home page
-     
+    
+    def execute_query(self, query, data, fetchone=False):
+        try:
+            db_connection = conn()
+            if db_connection is None:
+                print("Error: Unable to establish a database connection.")
+                return None
+
+            cursor = db_connection.cursor()
+            cursor.execute(query, data)
+
+            if fetchone:
+                result = cursor.fetchone()
+            else:
+                result = None
+
+            db_connection.commit()
+
+            cursor.close()
+            db_connection.close()
+
+            return result
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return None
 
     def headings(self):
         self.lbl_title1 = tk.Label(self, width=8, bg="#104E8B", anchor="w")
@@ -112,27 +142,54 @@ class Admin_dashboard(tk.Tk):
         self.view_customers_details_indicate = tk.Label(self, text=" ", bg="black")
         self.view_customers_details_indicate.place(x=0, y=740, width=10, height=40)
         
-    def forgetCheckBox(self):
-        self.chk_show_password_1.place_forget()
-    
     # show password
     def toggle_password(self):
         if self.show_password_var_1.get() == 1:
             self.txt_password.config( show="")
         else:
             self.txt_password.config(show="*")
+            
+    def on_treeview_select(self, event):
+        # Get the selected item in the Treeview
+        item = event.widget.selection()[0]
+        values = event.widget.item(item, "values")
 
+        # Extract customer_id and booking_id from the selected row
+        customer_id, booking_id = values[0], values[3] 
 
-    def home_page(self, frame):   
-        # self.forgetCheckBox()
+        # Set the values in the corresponding entry fields
+        self.txt_customer_id.delete(0, tk.END)
+        self.txt_customer_id.insert(0, customer_id)
+
+        self.txt_booking_id.delete(0, tk.END)
+        self.txt_booking_id.insert(0, booking_id)
+
+    def go_to_everyone_login(self):
+        # Ask for confirmation
+        confirm = messagebox.askyesno("Logout", "Are you sure you want to logout?")
+        # If user confirms, proceed with the logout
+        if confirm:
+            self.destroy()
+            from everyone_login import Everyone_login
+            everyone_login_page = Everyone_login(self)
+            everyone_login_page.mainloop()
+        else:
+            # Stay in the same page
+            pass
+    
+
+    def home_page(self, frame):  
         self.alabel = tk.Label(self.main_frame, image=self.photo_1)
         self.alabel.place(x=-10, y=-550)
                      
         self.lbl_1 = tk.Label(self.main_frame, width=30, text="Ensuring A Seemless Experience", font=("Candara", 30, "bold"), fg="black", bg="light gray", bd=1)
-        self.lbl_1.place(x=600, y=510, height=65)
+        self.lbl_1.place(x=600, y=90, height=65)
         
         self.lbl_2 = tk.Label(self.main_frame, width=25, text=" Control Without Complexity", font=("Candara", 30, "bold"), fg="black", bg="light gray")
-        self.lbl_2.place(x=710, y=610, height=65)
+        self.lbl_2.place(x=710, y=190, height=65)
+        
+        self.btn_logout = tk.Button(self.main_frame, text="Log Out", width=13, font=("Candara", 23, "bold"), fg="black", bg="light gray", command=self.go_to_everyone_login)
+        self.btn_logout.place(x=990, y=650, height=50)
         
     def manage_drivers_page(self, frame):    
         self.lbl_1 = tk.Label(self.main_frame, width=20, text="Manage Drivers", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
@@ -172,8 +229,8 @@ class Admin_dashboard(tk.Tk):
         self.txt_password.place(x=900, y=450, height=35)
                 
         self.show_password_var_1 = tk.IntVar(self.main_frame)
-        self.chk_show_password_1 = tk.Checkbutton(self, width=1, variable=self.show_password_var_1, command=self.toggle_password)
-        self.chk_show_password_1.place(x=1448, y=541, height=34)
+        self.chk_show_password_1 = tk.Checkbutton(self.main_frame, width=1, variable=self.show_password_var_1, command=self.toggle_password)
+        self.chk_show_password_1.place(x=1177, y=451, height=33)
         
         self.lbl_licence_number = tk.Label(self.main_frame, text="Licence Number: ", font=("Candara", 17), fg="black", bg="light gray", anchor="e")
         self.lbl_licence_number.place(x=50, y=550)
@@ -193,22 +250,187 @@ class Admin_dashboard(tk.Tk):
         
 
     def view_drivers_page(self, frame):
-        self.forgetCheckBox()
         lbl_1 = tk.Label(self.main_frame, width=20, text="View Drivers", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
-        lbl_1.place(x=844, y=90, height=65)
+        lbl_1.place(x=844, y=60, height=65)
+        
+        # Create Treeview widget for displaying drivers
+        tree = ttk.Treeview(self.main_frame, columns=("Driver_ID", "Name", "Address", "Phone_Number", "Email", "Username", "Licence_Number", "Taxi_Plate_Number", "Taxi_Status"))
+        tree.heading("#0", text="Index", anchor=tk.W)
+        tree.column("#0", width=50)
+        tree.heading("Driver_ID", text="Driver ID", anchor=tk.W)
+        tree.column("Driver_ID", width=80)
+        tree.heading("Name", text="Name", anchor=tk.W)
+        tree.column("Name", width=120)
+        tree.heading("Address", text="Address", anchor=tk.W)
+        tree.column("Address", width=120)
+        tree.heading("Phone_Number", text="Phone Number", anchor=tk.W)
+        tree.column("Phone_Number", width=150)
+        tree.heading("Email", text="Email", anchor=tk.W)
+        tree.column("Email", width=150)
+        tree.heading("Username", text="Username", anchor=tk.W)
+        tree.column("Username", width=120)
+        tree.heading("Licence_Number", text="Licence Number", anchor=tk.W)
+        tree.column("Licence_Number", width=150)
+        tree.heading("Taxi_Plate_Number", text="Taxi Plate Number", anchor=tk.W)
+        tree.column("Taxi_Plate_Number", width=150)
+        tree.heading("Taxi_Status", text="Taxi_Status", anchor=tk.W)
+        tree.column("Taxi_Status", width=139)
+
+        # Fetch and display drivers data from the database
+        drivers_data = view_drivers_action.get_drivers_data()
+        if drivers_data:
+            for index, driver in enumerate(drivers_data):
+                tree.insert("", index, text=str(index + 1), values=driver)
+
+            tree.place(x=15, y=180, height=510)
+
+        else:
+            messagebox.showwarning("No Data", "No drivers data found.")
+
+        # Add scrollbar to the treeview
+        scrollbar = ttk.Scrollbar(self.main_frame, orient="vertical", command=tree.yview)
+        scrollbar.place(x=177 + 1050, y=182, height=505)
+
+        tree.configure(yscrollcommand=scrollbar.set)
 
 
     def manage_bookings_page(self, frame): 
-        self.forgetCheckBox()
         lbl_1 = tk.Label(self.main_frame, width=20, text="Manage Bookings", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
-        lbl_1.place(x=844, y=90, height=65)
+        lbl_1.place(x=844, y=60, height=65)
         
-    
+        # Create Treeview widget for displaying bookings
+        tree = ttk.Treeview(self.main_frame, columns=("Customer_ID", "Customer_Name", "Customer_Phone_Number", "Booking_ID", "Pick_Up_Address", "Drop_Off_Address", "Pick_Up_Date", "Pick_Up_Time", "Booking_Status", "Driver_ID", "Driver_Name", "Driver_Phone_Number", "Taxi_Plate_Number", "Taxi_Status"))
+        tree.heading("#0", text="Index", anchor=tk.W)
+        tree.column("#0", width=50)
+        tree.heading("Customer_ID", text="Customer ID", anchor=tk.W)
+        tree.column("Customer_ID", width=80)
+        tree.heading("Customer_Name", text="Customer Name", anchor=tk.W)
+        tree.column("Customer_Name", width=150)
+        tree.heading("Customer_Phone_Number", text="Customer Phone Number", anchor=tk.W)
+        tree.column("Customer_Phone_Number", width=160)
+        tree.heading("Booking_ID", text="Booking ID", anchor=tk.W)
+        tree.column("Booking_ID", width=80)
+        tree.heading("Pick_Up_Address", text="Pick Up Address", anchor=tk.W)
+        tree.column("Pick_Up_Address", width=120)
+        tree.heading("Drop_Off_Address", text="Drop Off Address", anchor=tk.W)
+        tree.column("Drop_Off_Address", width=120)
+        tree.heading("Pick_Up_Date", text="Pick Up Date", anchor=tk.W)
+        tree.column("Pick_Up_Date", width=120)
+        tree.heading("Pick_Up_Time", text="Pick Up Time", anchor=tk.W)
+        tree.column("Pick_Up_Time", width=120)
+        tree.heading("Booking_Status", text="Booking Status", anchor=tk.W)
+        tree.column("Booking_Status", width=120)
+        tree.heading("Driver_ID", text="Driver ID", anchor=tk.W)
+        tree.column("Driver_ID", width=80)
+        tree.heading("Driver_Name", text="Driver Name", anchor=tk.W)
+        tree.column("Driver_Name", width=150)
+        tree.heading("Driver_Phone_Number", text="Driver Phone Number", anchor=tk.W)
+        tree.column("Driver_Phone_Number", width=150)
+        tree.heading("Taxi_Plate_Number", text="Taxi Plate Number", anchor=tk.W)
+        tree.column("Taxi_Plate_Number", width=150)
+        tree.heading("Taxi_Status", text="Taxi Status", anchor=tk.W)
+        tree.column("Taxi_Status", width=150)
+        
+        # Fetch and display bookings data from the database
+        bookings_data = manage_bookings_action.manage_bookings_action()
+        if bookings_data:
+            for index, booking in enumerate(bookings_data):
+                tree.insert("", index, text=str(index + 1), values=booking)
+
+            # Add a binding to the Treeview selection event
+            tree.bind("<ButtonRelease-1>", self.on_treeview_select)
+            
+            tree.place(x=15, y=180, height=230, width=1230)
+            
+             # Add scrollbar to the treeview (vertical scrollbar)
+            y_scrollbar = ttk.Scrollbar(self.main_frame, orient="vertical", command=tree.yview)
+            y_scrollbar.place(x=178 + 1050, y=182, height=228)
+
+            # Add scrollbar to the treeview (horizontal scrollbar)
+            x_scrollbar = ttk.Scrollbar(self.main_frame, orient="horizontal", command=tree.xview)
+            x_scrollbar.place(x=15, y=400, width=1230)
+
+            # Configure treeview to use scrollbars
+            tree.configure(yscrollcommand=y_scrollbar.set, xscrollcommand=x_scrollbar.set)
+   
+        else:
+            messagebox.showwarning("No Data", "No bookings data found.")
+
+        self.lbl_customer_id = tk.Label(self.main_frame, text="Customer ID: ", font=("Candara", 17), fg="black", anchor="e")
+        self.lbl_customer_id.place(x=50, y=450)
+        self.txt_customer_id = tk.Entry(self.main_frame, width=15, font=("Candara", 15), bd=1)
+        self.txt_customer_id.place(x=220, y=450, height=35)
+        
+        self.lbl_booking_id = tk.Label(self.main_frame, text="Booking ID: ", font=("Candara", 17), fg="black", anchor="e")
+        self.lbl_booking_id.place(x=495, y=450)
+        self.txt_booking_id = tk.Entry(self.main_frame, width=15, font=("Candara", 15), bd=1)
+        self.txt_booking_id.place(x=645, y=450, height=35)
+        
+        self.lbl_driver_id = tk.Label(self.main_frame, text="Driver ID: ", font=("Candara", 17), fg="black", anchor="e")
+        self.lbl_driver_id.place(x=910, y=450)
+        self.txt_driver_id = tk.Entry(self.main_frame, width=15, font=("Candara", 15), bd=1)
+        self.txt_driver_id.place(x=1040, y=450, height=35)
+        
+        self.lbl_driver_name = tk.Label(self.main_frame, text="Driver Name: ", font=("Candara", 17), fg="black", anchor="e")
+        self.lbl_driver_name.place(x=50, y=550)
+        self.txt_driver_name = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_driver_name.place(x=220, y=550, height=35)
+        
+        self.lbl_driver_phone_number = tk.Label(self.main_frame, text="Driver Phone: ", font=("Candara", 17), fg="black", anchor="e")
+        self.lbl_driver_phone_number.place(x=730, y=550)
+        self.txt_driver_phone_number = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_driver_phone_number.place(x=900, y=550, height=35)
+        
+        self.lbl_taxi_plate_number = tk.Label(self.main_frame, text="Taxi Number: ", font=("Candara", 17), fg="black", anchor="e")
+        self.lbl_taxi_plate_number.place(x=50, y=650)
+        self.txt_taxi_plate_number = tk.Entry(self.main_frame, width=28, font=("Candara", 15), bd=1)
+        self.txt_taxi_plate_number.place(x=220, y=650, height=35)
+        
+        self.btn_accept_booking = tk.Button(self.main_frame, text="Accept Booking", width=15, font=("Candara", 20, "bold"), fg="white", bg="brown", bd=0, command=self.accept_booking_action)
+        self.btn_accept_booking.place(x=980, y=650, height=50)        
+        
+       
+        
     def customers_details_page(self, frame): 
-        self.forgetCheckBox()
         lbl_1 = tk.Label(self.main_frame, width=20, text="Customers Details", font=("Candara", 30, "bold"), fg="white", bg="brown", bd=1)
-        lbl_1.place(x=844, y=90, height=65)
-        
+        lbl_1.place(x=844, y=60, height=65)
+
+        # Create Treeview widget for displaying customer details
+        tree = ttk.Treeview(self.main_frame, columns=("Customer_ID", "Name", "Address", "Phone_Number", "Email", "Username", "Payment_Method"))
+        tree.heading("#0", text="Index", anchor=tk.W)
+        tree.column("#0", width=50)
+        tree.heading("Customer_ID", text="Customer ID", anchor=tk.W)
+        tree.column("Customer_ID", width=80)
+        tree.heading("Name", text="Name", anchor=tk.W)
+        tree.column("Name", width=190)
+        tree.heading("Address", text="Address", anchor=tk.W)
+        tree.column("Address", width=200)
+        tree.heading("Phone_Number", text="Phone Number", anchor=tk.W)
+        tree.column("Phone_Number", width=120)
+        tree.heading("Email", text="Email", anchor=tk.W)
+        tree.column("Email", width=200)
+        tree.heading("Username", text="Username", anchor=tk.W)
+        tree.column("Username", width=190)
+        tree.heading("Payment_Method", text="Payment Method", anchor=tk.W)
+        tree.column("Payment_Method", width=200)
+
+        # Fetch and display customer details from the database
+        customer_details = customer_details_action.get_customer_details()
+        if customer_details:
+            for index, customer in enumerate(customer_details):
+                tree.insert("", index, text=str(index + 1), values=customer)
+
+            tree.place(x=15, y=180, height=510)
+
+        else:
+            messagebox.showwarning("No Data", "No customer details found.")
+
+        # Add scrollbar to the treeview
+        scrollbar = ttk.Scrollbar(self.main_frame, orient="vertical", command=tree.yview)
+        scrollbar.place(x=177 + 1050, y=182, height=505)
+
+        tree.configure(yscrollcommand=scrollbar.set)
+
     
     
     #####################============================== Action for btn_add_driver ==========================================================================
@@ -250,6 +472,11 @@ class Admin_dashboard(tk.Tk):
             messagebox.showerror("Error", "Please use appropriate password.")   
             return
         
+        #================================= Set global variables=====================================================================================================================================
+        global_all.global_driver_username = username
+        global_all.global_driver_password = password
+        #=============================================================================================================================================================================================================================
+       
         # Validation for licence number
         licence_number = self.txt_licence_number.get()
         if not re.match(r'^[a-zA-Z0-9/-]+$', licence_number):
@@ -262,12 +489,16 @@ class Admin_dashboard(tk.Tk):
             messagebox.showerror("Error", "Invalid Name.")
             return
         
-        # DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+        #========================================================DB=============================================================================================================================================================================================================================
         from add_driver_action import add_driver_action
+        driver_id = global_all.global_driver_id
         result = add_driver_action(name, address, phone, email, username, password, licence_number, taxi_plate_number)
         
         if result:
             self.clear_entry_fields()  
+            # Store driver_id in global variable
+            global_all.global_driver_id = driver_id
+      
      
      
     def delete_driver_action(self):
@@ -301,8 +532,46 @@ class Admin_dashboard(tk.Tk):
         
         if result:
             self.clear_entry_fields() 
-            
     
+    
+    def accept_booking_action(self):
+        customer_id = self.txt_customer_id.get()
+        booking_id = self.txt_booking_id.get()
+        driver_id = self.txt_driver_id.get()
+        
+        # Validate input data
+        if not customer_id.isdigit() or not booking_id.isdigit() or not driver_id.isdigit():
+            messagebox.showerror("Error", "Invalid input. Please enter valid ID.")
+            return
+        
+        driver_name = self.txt_driver_name.get()
+        if not driver_name.replace(" ", "").isalnum():
+            messagebox.showerror("Error", "Invalid Name.")
+            return
+        
+        driver_phone_number = self.txt_driver_phone_number.get()
+        if not driver_phone_number.isdigit() or len(driver_phone_number) != 10:
+            messagebox.showerror("Error", "Invalid Phone Number")
+            return
+        
+        taxi_plate_number = self.txt_taxi_plate_number.get()
+        if not taxi_plate_number:
+            messagebox.showerror("Error", "Invalid Taxi Plate Number.")
+            return False
+    
+        from accept_booking_action import accept_booking_action
+        result = accept_booking_action(
+            customer_id,
+            booking_id,
+            'Accepted',
+            driver_id,
+            driver_name,
+            driver_phone_number,
+            taxi_plate_number,
+            'Booked'
+        )
+        
+            
     # Clear All Entries
     def clear_entry_fields(self):
         # Clear all entry fields
@@ -314,6 +583,8 @@ class Admin_dashboard(tk.Tk):
         self.txt_password.delete(0, tk.END)
         self.txt_licence_number.delete(0, tk.END)
         self.txt_taxi_plate_number.delete(0, tk.END)
+        
+    
         
 
 if __name__ == '__main__':

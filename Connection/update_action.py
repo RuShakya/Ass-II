@@ -19,7 +19,8 @@ def update_action(up_customer_id, up_booking_id, up_pick_up_address, up_drop_off
             # Check if any rows were affected
             if cursor.rowcount > 0:
                 messagebox.showinfo("Trip Updated", "Booked Trip Updated Successfully.")
-                return True
+                print(up_customer_id)
+                return True, up_customer_id
             else:
                 messagebox.showinfo("Trip Not Updated", "Booked Trip can't be updated.")
                 return False

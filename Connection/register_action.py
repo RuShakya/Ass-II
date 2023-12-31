@@ -22,6 +22,9 @@ def register_action(name, address, phone, email, username, password, confirm_pas
             )
             cursor.execute(query, data)
             db_connection.commit()
+            
+            # Retrieve auto-incremented customer_id
+            customer_id = cursor.lastrowid
 
         except mysql.connector.Error as err:
             messagebox.showerror("Error", f"Error: {err}")
@@ -31,6 +34,6 @@ def register_action(name, address, phone, email, username, password, confirm_pas
             db_connection.close()
 
         messagebox.showinfo("Registered", "Customer Registered Successfully.")
-        return True
+        return True, customer_id
 
-    return False
+    return False, None

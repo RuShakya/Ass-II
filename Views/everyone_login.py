@@ -5,6 +5,8 @@ import sys
 sys.path.append('C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\Connection')
 import conn
 import login_action
+sys.path.append('C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\Views')
+import global_all
 
 class Everyone_login(tk.Tk):
     def __init__(self, root=None):
@@ -86,6 +88,12 @@ class Everyone_login(tk.Tk):
         admin_dashboard_page = Admin_dashboard(self)
         admin_dashboard_page.mainloop()
     
+    def go_to_driver_dashboard(self):
+        self.destroy()
+        from driver_dashboard import Driver_dashboard
+        driver_dashboard_page = Driver_dashboard(self)
+        driver_dashboard_page.mainloop()
+    
     def underline_text(self, button):
         from tkinter import font
 
@@ -112,19 +120,29 @@ class Everyone_login(tk.Tk):
 
     
     def login_button_action(self):
-
         username = self.txt_username.get()
         password = self.txt_password.get()
-        
+
         from login_action import login_action
-        result = login_action(username, password)
+        result, user_id = login_action(username, password)
+
         if result == "customer":
+            global_all.global_customer_id = user_id
             self.go_to_customer_dashboard()
         elif result == "admin":
             self.go_to_admin_dashboard()
- 
-        
-    
+        elif result == "driver":
+            global_all.global_driver_id = user_id
+            self.go_to_driver_dashboard()
+        else:
+            messagebox.showerror("Error", "Unknown Username or Password!")
+
+        #=================================global================================================================================================    
+        global_all.global_username = username
+        global_all.global_password = password
+        #===============================================================================================================================================
+
+   
 if __name__=='__main__':
     gui = Everyone_login()
     gui.mainloop()
