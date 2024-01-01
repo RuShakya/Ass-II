@@ -14,18 +14,19 @@ def book_now_action(pick_address, drop_address, pick_date, pick_time, agree, cus
             cursor = db_connection.cursor()
             
             # Retrieve customer_name based on customer_id
-            customer_name_query = "SELECT name FROM tbl_customer WHERE customer_id = %s"
+            customer_name_query = "SELECT name, phone_number FROM tbl_customer WHERE customer_id = %s"
             cursor.execute(customer_name_query, (customer_id,))
             customer_name_result = cursor.fetchone()
             
             if customer_name_result:
                 customer_name = customer_name_result[0]
+                customer_phone_number = customer_name_result[1]
             else:
                 messagebox.showerror("Error", "Customer not found.")
                 return False
             
             # Insert data into tbl_booking
-            booking_query = "INSERT INTO tbl_booking (Pick_Up_Address, Drop_Off_Address, Pick_Up_Date, Pick_Up_Time, Terms_And_Conditions, Booking_Status, Customer_ID) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            booking_query = "INSERT INTO tbl_booking (Pick_Up_Address, Drop_Off_Address, Pick_Up_Date, Pick_Up_Time, Terms_And_Conditions, Booking_Status, Customer_ID, Admin_ID, Driver_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
             booking_data = (
                 pick_address,    
                 drop_address,
@@ -33,7 +34,9 @@ def book_now_action(pick_address, drop_address, pick_date, pick_time, agree, cus
                 pick_time,
                 "Accepted",
                 "Pending",
-                customer_id
+                customer_id,
+                0,
+                0
             )
             cursor.execute(booking_query, booking_data)
             db_connection.commit()
@@ -48,12 +51,13 @@ def book_now_action(pick_address, drop_address, pick_date, pick_time, agree, cus
                     # Insert data into tbl_combined_data
                     combined_query = """
                         INSERT INTO tbl_all_bookings
-                        (customer_id, Customer_Name, booking_id, pick_up_address, drop_off_address, pick_up_date, pick_up_time, booking_status, driver_id, driver_name, driver_phone_number, taxi_plate_number)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        (customer_id, Customer_Name, Customer_Phone_Number, booking_id, pick_up_address, drop_off_address, pick_up_date, pick_up_time, booking_status, driver_id, driver_name, driver_phone_number, taxi_plate_number, taxi_status)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """
                     combined_data = (
                         customer_id,
                         customer_name,
+                        customer_phone_number,
                         booking_id,
                         pick_address,
                         drop_address,
@@ -63,7 +67,8 @@ def book_now_action(pick_address, drop_address, pick_date, pick_time, agree, cus
                         0,  # Default driver_id
                         "Pending",  # Default driver_name
                         0,  # Default driver_phone_number
-                        0  # Default taxi_plate_number
+                        0,  # Default taxi_plate_number
+                        "Pending"
                     )
                     cursor.execute(combined_query, combined_data)
                     db_connection.commit()

@@ -9,19 +9,24 @@ def cancel_action(cancel_customer_id, cancel_booking_id):
         try:
             cursor = db_connection.cursor()
 
-            query = "DELETE FROM tbl_booking WHERE Booking_ID=%s AND Customer_ID=%s"
-            
-            # Execute the query with the provided values
-            cursor.execute(query, (cancel_customer_id, cancel_booking_id))
-            
-            # Commit the changes to the database
+            # Use placeholders in the query to avoid SQL injection
+            # Execute the first query to delete from tbl_booking
+            query_booking = "DELETE FROM tbl_booking WHERE Booking_ID=%s AND Customer_ID=%s"
+            cursor.execute(query_booking, (cancel_booking_id, cancel_customer_id))
+
+            # Execute the second query to delete from tbl_all_bookings
+            query_all_bookings = "DELETE FROM tbl_all_bookings WHERE Booking_ID=%s AND Customer_ID=%s"
+            cursor.execute(query_all_bookings, (cancel_booking_id, cancel_customer_id))
+
+            # Commit the changes
             db_connection.commit()
 
+            # Check if any rows were affected
             if cursor.rowcount > 0:
-                messagebox.showinfo("Booking Deleted", "Booking Canceled successfully.")
-                return True
+                messagebox.showinfo("Trip Cancelled", "Booking Cancelled Successfully.")
+                return True, cancel_customer_id
             else:
-                messagebox.showinfo("No Booking Deleted", "No matching booking found for cancelation.")
+                messagebox.showerror("Trip Not Cancelled", "Booked Trip can't be cancelled.")
                 return False
 
         except mysql.connector.Error as err:
@@ -29,9 +34,9 @@ def cancel_action(cancel_customer_id, cancel_booking_id):
             print("Error:", err)
 
         finally:
-            # Close the cursor and connection
-            cursor.close()
+            # Close the cursor (if it exists) and connection
+            if 'cursor' in locals() and cursor is not None:
+                cursor.close()
             db_connection.close()
 
     return False
-

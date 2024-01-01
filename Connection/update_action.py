@@ -12,6 +12,9 @@ def update_action(up_customer_id, up_booking_id, up_pick_up_address, up_drop_off
             query = "UPDATE tbl_booking SET Pick_Up_Address=%s, Drop_Off_Address=%s, Pick_Up_Date=%s, Pick_Up_Time=%s WHERE customer_id=%s AND booking_id=%s"
             cursor.execute(query, (up_pick_up_address, up_drop_off_address, up_date, up_time, up_customer_id, up_booking_id))
             
+            query = "UPDATE tbl_all_bookings SET Pick_Up_Address=%s, Drop_Off_Address=%s, Pick_Up_Date=%s, Pick_Up_Time=%s WHERE customer_id=%s AND booking_id=%s"
+            cursor.execute(query, (up_pick_up_address, up_drop_off_address, up_date, up_time, up_customer_id, up_booking_id))
+            
             # Commit the changes and close the connection
             db_connection.commit()
             db_connection.close()
@@ -22,7 +25,7 @@ def update_action(up_customer_id, up_booking_id, up_pick_up_address, up_drop_off
                 print(up_customer_id)
                 return True, up_customer_id
             else:
-                messagebox.showinfo("Trip Not Updated", "Booked Trip can't be updated.")
+                messagebox.showerror("Trip Not Updated", "Booked Trip can't be updated.")
                 return False
 
         except mysql.connector.Error as err:

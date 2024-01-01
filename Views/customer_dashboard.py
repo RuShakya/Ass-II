@@ -10,6 +10,7 @@ sys.path.append('C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\Connect
 import conn
 import book_now_action
 import update_action
+import cancel_action
 import view_bookings_action
 sys.path.append('C:\\Users\\user\\Desktop\\Sem 2 - Assignment 2\\Ass-II\\Views')
 import global_all

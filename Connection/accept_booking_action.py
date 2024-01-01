@@ -18,8 +18,8 @@ def accept_booking_action(customer_id, booking_id, booking_status, driver_id, dr
             if cursor.rowcount > 0:
                 # If the update on tbl_all_bookings is successful, proceed with other queries
                 # Update tbl_booking
-                update_booking_query = "UPDATE tbl_booking SET booking_status=%s WHERE booking_id = %s"
-                cursor.execute(update_booking_query, (booking_status, booking_id))
+                update_booking_query = "UPDATE tbl_booking SET booking_status=%s, admin_id=1, driver_id=%s WHERE booking_id = %s"
+                cursor.execute(update_booking_query, (booking_status, driver_id, booking_id))
 
                 # Update tbl_taxi
                 update_taxi_query = "UPDATE tbl_taxi SET taxi_status=%s WHERE taxi_plate_number = %s"
