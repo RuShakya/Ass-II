@@ -11,25 +11,25 @@ import register_action
 import global_all
 
 
-
+#----------------------------------------------------------------- Creating Customer_registration Class -------------------------------------------------------------------------------------
 class Customer_registration(tk.Tk):
     def __init__(self, root=None):
         super().__init__()
         self.root = root
-        self.title("Taxi Booking Registration Page")
+        self.title("Taxi Booking Registration Page")        #title of page
 
         # database connection details
         from conn import conn
         self.db_connection = conn()
         
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
+        screen_width = self.winfo_screenwidth()                     #width according to screen width 
+        screen_height = self.winfo_screenheight()                   #height according to screen height 
         self.geometry(f"{screen_width}x{screen_height}+0+0")  
-        self.resizable(False, False)
-        self.image()
-        self.heading()
-        self.labels()
-        self.buttons()
+        self.resizable(False, False)                                # can't be resizable
+        self.image()                                                # calling image
+        self.heading()                                              # calling heading
+        self.labels()                                               # calling labels
+        self.buttons()                                              # calling buttons
     
 
     def image(self):
