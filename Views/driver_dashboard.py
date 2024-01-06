@@ -76,7 +76,7 @@ class Driver_dashboard(tk.Tk):
         self.home_indicate.place(x=0, y=190, width=10, height=40)
     
         # View Button
-        self.btn_view = tk.Button(self, text="View Bookings", width=15, font=("Candara", 23, "bold"), fg="white", bg="#02211f", bd=0, command=lambda: self.indicate(self.view_indicate, self.view_page))
+        self.btn_view = tk.Button(self, text="View Your Trips", width=15, font=("Candara", 23, "bold"), fg="white", bg="#02211f", bd=0, command=lambda: self.indicate(self.view_indicate, self.view_page))
         self.btn_view.place(x=-2, y=350, height=40)
 
         # View_Indicator
@@ -134,8 +134,8 @@ class Driver_dashboard(tk.Tk):
     def view_page(self, frame):
         driver_id = global_all.global_driver_id  # Fetch the driver ID from the global variable
         
-        self.lbl_1 = tk.Label(self.main_frame, width=33, text="View Your Bookings", font=("Candara", 30, "bold"), fg="white", bg="#4a967a", bd=1)
-        self.lbl_1.place(x=590, y=50, height=85)
+        self.lbl_1 = tk.Label(self.main_frame, width=30, text="View Upcoming Trips", font=("Candara", 30, "bold"), fg="white", bg="#4a967a", bd=1)
+        self.lbl_1.place(x=600, y=50, height=85)
         
         # Display bookings in a tkinter widget (e.g., Treeview)
         tree = ttk.Treeview(self.main_frame, columns=("Customer_ID", "Customer_Name", "Customer_Phone_Number", "Booking_ID", "Pick_Up_Address", "Drop_Off_Address", "Pick_Up_Date", "Pick_Up_Time", "Booking_Status", "Driver_ID", "Driver_Name", "Driver_Phone_Number", "Taxi_Plate_Number", "Taxi_Status"))

@@ -9,7 +9,7 @@ def get_customer_details():
         cursor = db_connection.cursor()
         
         # get the customer details from the database
-        query = "SELECT * FROM tbl_customer"
+        query = "SELECT Customer_ID, Name, Address, Phone_Number, Email, Username, Payment_METHOD FROM tbl_customer"
         cursor.execute(query)
         customer_details = cursor.fetchall()
         
