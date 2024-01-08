@@ -13,7 +13,7 @@ class Everyone_login(tk.Tk):
     def __init__(self, root=None):
         super().__init__()
         self.root = root
-        self.title("Taxi Booking Login Page")       #title of page
+        self.title("Taxi Booking Home Page")       #title of page
         
         screen_width = self.winfo_screenwidth()     #width according to screen width    
         screen_height = self.winfo_screenheight()   #height according to screen height
